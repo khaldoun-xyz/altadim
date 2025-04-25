@@ -1,47 +1,25 @@
 # Altadim is an AI dev setup for your Linux laptop
 
-Altadim is a developer steup for AI technologists that give you a one command ready environmet to
-start developing your work with minimum to zero conflicts.
-Usually, setting up your computer takes time and requires customisation.
-In contrast, we want to make it easy to install most of what you need with one command.
-If there are customisations that you require,
-we provide an easy-to-understand way to include these customisations.
-Because time spent configuring is not time spent creating, we aim
- to provide consistency across machines and team members.
-
-
-## Description
-
-Altadim is a set of configurations and instalaltion of all needed customizations to your new environment.
-This setup will primarily serve Khaldoun users and developers initially, but is designed to eventually support all AI technologists.
-The environment will start with a focused user base but is intended to scale to accommodate the broader AI technology community as it evolves.
+Altadim is a developer setup for AI technologists that you set up with one command.
+If you need customisations, we provide a simple way to expand your setup.
 
 ## What you need
 
-- a fresh 24.04.2 LTS install
+- a fresh 24.04.2 Ubuntu LTS install
 - an internet connection
 
-## What you get
+## What you always get
 
-- a great basic lazyvim setup for AI development in Python
-- a great basic vscode setup for AI development in Python
-- dev tools like Alacritty, Zellij, Docker, Tmux, Sqlite, psql,
-  Aider, screenshot tools (e.g. flameshot)
-- All av ailmable internal products (Lugha,
-renard..) which will eb started with simply typing their names in you terminal
+- a basic lazyvim setup with some customisation for AI development in Python
+- a basic vscode setup with some customisation for AI development in Python
+- tools: Alacritty, Zellij, Docker, Tmux, Sqlite, psql, Flameshot
+- code assistants: Aider
 
+## What you can optionally install
 
-### Core concept 
-The code is written in bash(might change// Looking ...)
-as a suite of commands.
+- Khaldoun's open-source projects to work on
 
+## Further info
 
-###Future features
-Integrate coding assistants like [aider](https://aider.chat/) 
-
-
-## How to learn more?
-
-We documented how to use your new setup at <https://books.khaldoun.xyz/2/altadim>.
-If you have suggestions how to improve Altadim
-or which features to add, open an issue.
+- We will document how to use your new setup at <https://books.khaldoun.xyz/2/altadim>.
+- [Omakub](https://omakub.org/) is the original inspiration for Altadim.
