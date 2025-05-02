@@ -1,25 +1,25 @@
 # Altadim is an AI dev setup for your Linux laptop
 
-Start working on AI development work on day 1.
-Usually, setting up your computer takes time and requires customisation.
-In contrast, we want to make it easy to install most of what you need with one command.
-If there are customisations that you require,
-we provide an easy-to-understand way to include these customisations.
+Altadim is a developer setup for AI technologists that you set up with one command.
+If you need customisations, we provide a simple way to expand your setup.
 
 ## What you need
 
-- a fresh pop_os install
+- a fresh 24.04.2 Ubuntu LTS install
 - an internet connection
 
-## What you get
+## What you always get
 
-- a great basic lazyvim setup for AI development in Python
-- a great basic vscode setup for AI development in Python
-- dev tools like Alacritty, Zellij, Docker, Tmux, Sqlite, psql,
-  Aider, screenshot tools (e.g. flameshot)
+- a basic lazyvim setup with some customisation for AI development in Python
+- a basic vscode setup with some customisation for AI development in Python
+- tools: Alacritty, Zellij, Docker, Tmux, Sqlite, psql, Flameshot
+- code assistants: Aider
 
-## How to learn more?
+## What you can optionally install
 
-We documented how to use your new setup at <https://books.khaldoun.xyz/2/altadim>.
-If you have suggestions how to improve Altadim
-or which features to add, open an issue.
+- Khaldoun's open-source projects to work on
+
+## Further info
+
+- We will document how to use your new setup at <https://books.khaldoun.xyz/2/altadim>.
+- [Omakub](https://omakub.org/) is the original inspiration for Altadim.
