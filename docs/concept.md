@@ -19,7 +19,7 @@ If you need customisations, we provide a simple way to expand your setup.
 
 - Khaldoun's open-source projects to work on
 
-## Testing Environment Setup Manual
+## Set up a virtual machine to test Altadim
 This guide explains how to set up a testing environment using VirtualBox and Vagrant to efficiently create and manage virtual machines.
 
 ### Required Tools
@@ -28,7 +28,9 @@ This guide explains how to set up a testing environment using VirtualBox and Vag
    - Installation: [https://www.virtualbox.org/](https://www.virtualbox.org/)
 
 2. **Vagrant** - A tool for building and managing virtual machine environments
-   - Installation: [https://developer.hashicorp.com/vagrant/install](https://developer.hashicorp.com/vagrant/install?product_intent=vagrant)
+   - wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install vagrant
 
 ### Pre-Installation Steps
 
@@ -53,8 +55,8 @@ Vagrant with VirtualBox allows you to:
 Create a dedicated folder for each VM environment:
 
 ```bash
-mkdir VMAltadim
-cd VMAltadim
+mkdir vm-altadim
+cd vm-altadim
 ```
 
 #### 2. Initialize Git (Optional)
@@ -81,40 +83,9 @@ vagrant init ubuntu/trusty64
 vagrant init ubuntu/jammy64
 ```
 
-This creates a basic Vagrantfile that you can modify by uncommenting the needed sections.
+This creates a basic Vagrantfile that you can modify by uncommenting the needed sections or adding to the file.
 
-##### Option 2: Manual Configuration
 
-Create a Vagrantfile manually with your custom configurations:
-
-```ruby
-Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/jammy64"
-  
-  # Configure VM settings
-  config.vm.provider "virtualbox" do |vb|
-    vb.memory = "2048"
-    vb.cpus = 2
-    vb.name = "Altadim_Testing_Environment"
-  end
-  
-  # Network settings
-  config.vm.network "private_network", ip: "192.168.56.10"
-  
-  # Shared folders
-  config.vm.synced_folder "./", "/vagrant_data"
-  
-  # Provisioning
-  config.vm.provision "shell", inline: <<-SHELL
-    apt-get update
-    apt-get install -y git
-  SHELL
-end
-```
-
-##### Option 3: Direct VirtualBox Management
-
-Create and manage your VMs directly through the VirtualBox interface instead of using Vagrant.
 
 #### 4. Starting Your Virtual Machine
 
@@ -135,7 +106,8 @@ vagrant ssh
 #### 6. Moving Files to Your VM
 
 Transfer files between host and VM:
-- Files placed in the project directory are automatically accessible in the VM at `/vagrant`
+- Files placed in the project directory are automatically accessible in the VM at `/vagrant` ==>
+      Place Altadim setup file in the vm-alatdim directory and run it once in your Vm
 - For other directories, configure synced folders in your Vagrantfile
 
 
