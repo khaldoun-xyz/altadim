@@ -69,9 +69,9 @@ git init
 
 #### 3. Set Up Vagrant Environment
 
-You have three options to set up your Vagrant environment:
+You have multiple options to set up your Vagrant environment, we've chosen this approach:
 
-##### Option 1: Automatic Initialization with Vagrant
+##### Automatic Initialization with Vagrant
 
 Initialize a Vagrant environment with a specific box (OS image):
 
@@ -79,9 +79,13 @@ Initialize a Vagrant environment with a specific box (OS image):
 # For Ubuntu 14.04
 vagrant init ubuntu/trusty64
 
+# For Mac users (if facing trouble)
+vagrant init  perk/ubuntu-2204-arm64
+
 # OR for Ubuntu 22.04
 vagrant init ubuntu/jammy64
 ```
+
 
 This creates a basic Vagrantfile that you can modify by uncommenting the needed sections or adding to the file.
 
@@ -95,6 +99,18 @@ Once your Vagrantfile is configured:
 vagrant up
 ```
 
+```Ruby
+# For Mac users (if error: No image virtual size specified for box)
+Vagrant.configure("2") do |config|
+  config.vm.box = "perk/ubuntu-2204-arm64"
+
+  config.vm.provider "virtualbox" do |vb|
+    # You can add VirtualBox specific configurations here if needed
+  end
+end
+# Make sure to precise VirtualBox as a provider
+```
+
 #### 5. Accessing Your Virtual Machine
 
 Connect to your running VM:
@@ -103,7 +119,7 @@ Connect to your running VM:
 vagrant ssh
 ```
 
-#### 6. Moving Files to Your VM
+#### 6. Moving Files to Your VM and running the setup
 
 Transfer files between host and VM:
 - Files placed in the project directory are automatically accessible in the VM at `/vagrant` ==>
@@ -111,8 +127,18 @@ Transfer files between host and VM:
 - For other directories, configure synced folders in your Vagrantfile
 
 
+```bash
+# Place the file Khaldoun-setup.sh inside vm-altadim directory 
+cp khaldoun_setup.sh vm-altadim/
+```
+
+Inside the Virtual Machine run:
 
 
+```bash
+# Place the file Khaldoun-setup.sh inside vm-altadim directory 
+bash khaldoun_setup.sh
+```
 
 ## Further info
 
