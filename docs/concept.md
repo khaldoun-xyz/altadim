@@ -5,8 +5,14 @@ If you need customisations, we provide a simple way to expand your setup.
 
 ## What you need
 
-- a fresh 24.04.2 Ubuntu LTS install
-- an internet connection
+- A fresh 24.04.2 Ubuntu LTS install
+
+
+```bash
+# You can check your Ubuntu version typing the following command in your terminal.
+lsb_release -a
+```
+- An internet connection
 
 ## What you always get
 
@@ -24,14 +30,6 @@ This guide explains how to set up a testing environment using VirtualBox and Vag
 
 ### Required Tools
 
-1. **VirtualBox** - A virtualization platform
-   - Installation: [https://www.virtualbox.org/](https://www.virtualbox.org/)
-
-2. **Vagrant** - A tool for building and managing virtual machine environments
-   - wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt update && sudo apt install vagrant
-
 ### Pre-Installation Steps
 
 Before installing the required tools, update your system packages:
@@ -39,6 +37,17 @@ Before installing the required tools, update your system packages:
 ```bash
 sudo apt update && sudo apt upgrade
 ```
+
+1. **VirtualBox** - A virtualization platform
+   - Installation: [https://www.virtualbox.org/](https://www.virtualbox.org/)
+
+2. **Vagrant** - A tool for building and managing virtual machine environments
+```bash
+ wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install vagrant
+```
+
 
 ### Why Use Vagrant with VirtualBox
 
@@ -101,6 +110,7 @@ vagrant up
 
 ```Ruby
 # For Mac users (if error: No image virtual size specified for box)
+ # alter this part inside your Vagrantfile
 Vagrant.configure("2") do |config|
   config.vm.box = "perk/ubuntu-2204-arm64"
 
