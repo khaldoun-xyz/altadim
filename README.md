@@ -1,15 +1,15 @@
 # Altadim: Get a full Linux setup ready in one command 
 
 Starting from a fresh Ubuntu instalaltion you can get a fully-configured, beautiful setup with one command.
-As an AI technologist you would work in a flowy ready set with zero to mininmum conflicts.
-All tools and packages will be synced.
+As an AI technologist,Altadim is designed for maximum efficiency and seamless integration, fostering a zero-friction workflow. This means all development tools, libraries, and dependencies are consistently synchronized and pre-configured, eliminating version conflicts and setup overhead.
+
 
 The concept for Altadim is [here](/docs/concept.md). Feel free to contribute.
 
 ## How to run it
 
 ```bash
-wget -qO -https://raw.githubusercontent.com/khaldoun-xyz/core_skills/refs/heads/main/setup/khaldoun-setup.sh
+a wget command will be placed here
 ```
 
 -Not ready to commit yet, please follow our  Setting Up Your Testing Environment in the concept page
