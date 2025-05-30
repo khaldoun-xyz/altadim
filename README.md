@@ -1,7 +1,8 @@
 # Altadim: Get a full Linux setup ready in one command 
 
-Starting from a fresh Ubuntu instalaltion you can get a fully-configured, beautiful setup with one command.
-As an AI technologist,Altadim is designed for maximum efficiency and seamless integration, fostering a zero-friction workflow. This means all development tools, libraries, and dependencies are consistently synchronized and pre-configured, eliminating version conflicts and setup overhead.
+Starting from a fresh Ubuntu installation, you can get a fully-configured, beautiful setup with one command.
+
+ Altadim is designed for maximum efficiency and seamless integration, fostering a zero-friction workflow. This means all development tools, libraries, and dependencies are consistently synchronized and pre-configured, eliminating version conflicts and setup overhead.
 
 
 The concept for Altadim is [here](/docs/concept.md). Feel free to contribute.
@@ -12,7 +13,7 @@ The concept for Altadim is [here](/docs/concept.md). Feel free to contribute.
 a wget command will be placed here
 ```
 
--Not ready to commit yet, please follow our  Setting Up Your Testing Environment in the concept page
+Not ready to commit yet, please follow the instructions in our "Setting Up Your Testing Environment" concept page
 
 ## Suggest changes
 
