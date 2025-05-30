@@ -5,7 +5,12 @@ If you need customisations, we provide a simple way to expand your setup.
 
 ## What you need
 
-- a fresh 24.04.2 Ubuntu LTS install
+- a fresh 24.04.2 Ubuntu LTS install :bangbang:
+
+```bash
+# You can check your Ubuntu version
+ lsb_release -a
+```
 - an internet connection
 
 ## What you always get
@@ -20,17 +25,11 @@ If you need customisations, we provide a simple way to expand your setup.
 - Khaldoun's open-source projects to work on
 
 ## Set up a virtual machine to test Altadim
+
 This guide explains how to set up a testing environment using VirtualBox and Vagrant to efficiently create and manage virtual machines.
 
+
 ### Required Tools
-
-1. **VirtualBox** - A virtualization platform
-   - Installation: [https://www.virtualbox.org/](https://www.virtualbox.org/)
-
-2. **Vagrant** - A tool for building and managing virtual machine environments
-   - wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt update && sudo apt install vagrant
 
 ### Pre-Installation Steps
 
@@ -39,6 +38,19 @@ Before installing the required tools, update your system packages:
 ```bash
 sudo apt update && sudo apt upgrade
 ```
+
+
+1. **VirtualBox** - A virtualization platform
+ Installation: [https://www.virtualbox.org/](https://www.virtualbox.org/)
+
+2. **Vagrant** - A tool for building and managing virtual machine environments
+
+```bash
+  wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+  sudo apt update && sudo apt install vagrant
+```
+
 
 ### Why Use Vagrant with VirtualBox
 
@@ -99,6 +111,8 @@ Once your Vagrantfile is configured:
 vagrant up
 ```
 
+- In the Vagrant file:
+
 ```Ruby
 # For Mac users (if error: No image virtual size specified for box)
 Vagrant.configure("2") do |config|
@@ -122,24 +136,38 @@ vagrant ssh
 #### 6. Moving Files to Your VM and running the setup
 
 Transfer files between host and VM:
-- Files placed in the project directory are automatically accessible in the VM at `/vagrant` ==>
-      Place Altadim setup file in the vm-alatdim directory and run it once in your Vm
-- For other directories, configure synced folders in your Vagrantfile
 
+-   Files placed in the project directory are automatically accessible in the VM at `/vagrant`. This is achieved by default, but you can explicitly define it in your `Vagrantfile` with:
+    ```ruby
+    config.vm.synced_folder ".", "/vagrant"
+    ```
+    For example, if you place your Altadim setup file (`khaldoun-setup.sh`) in the same directory as your `Vagrantfile` on your host machine, you can then access it within the VM.
 
-```bash
-# Place the file Khaldoun-setup.sh inside vm-altadim directory 
-cp khaldoun_setup.sh vm-altadim/
-```
+    ```bash
+    # Place the setup script in the same directory as your Vagrantfile
+    cp khaldoun_setup.sh vm-altadim/
+    ```
 
-Inside the Virtual Machine run:
+To access the synced folder in the VM and run the setup script:
 
-
-```bash
-# Place the file Khaldoun-setup.sh inside vm-altadim directory 
-bash khaldoun_setup.sh
-```
-
+1.  On your host machine, ensure the `config.vm.synced_folder ".", "/vagrant"` line is present (and uncommented) in your `Vagrantfile`.
+2.  Run:
+    ```bash
+    vagrant reload
+    ```
+    This will apply the synced folder configuration.
+3.  Connect to your VM:
+    ```bash
+    vagrant ssh
+    ```
+4.  Navigate to the `/vagrant` directory within the VM:
+    ```bash
+    cd /vagrant
+    ```
+5.  Run your setup script:
+    ```bash
+    bash khaldoun-setup.sh
+    ```
 ## Further info
 
 - We will document how to use your new setup at <https://books.khaldoun.xyz/2/altadim>.
