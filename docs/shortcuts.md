@@ -1,16 +1,16 @@
 # Shortcuts within Altadim
 
-As Altadim is heavily influenced by [Omakub](https://omakub.org/),
-this shortcut section is inspired by Omakub's [hotkeys section](https://manual.omakub.org/1/read/29/hotkeys).
+These shortcuts draw inspiration from Omakub's
+[hotkeys section](https://manual.omakub.org/1/read/29/hotkeys).
 
-## navigating Linux
+## Navigating Linux
 
 - open file explorer: `super + f`
 - move to next workstation: `ctrl + super + arrow down`
 - move app to next workstation: `shift + super + arrow down`
 - activate full-screen mode in app: `f11`
 
-## Zellij
+## Navigating Zellij
 
 - new vertical/horizontal pane: `ctrl + p + r/d`
 - increase/decrease current pane size: `alt +/-`
@@ -18,7 +18,7 @@ this shortcut section is inspired by Omakub's [hotkeys section](https://manual.o
 - open a floating pane: `alt + f`
 - create a new tab: `ctrl + t + n`
 
-## Neovim
+## Navigating Neovim
 
 - open/close the file tree: `space + e`
   - `h` in file tree: show hidden files (.env files are never shown)
