@@ -10,7 +10,7 @@ If you need customisations, we provide a simple way to expand your setup.
 ### What you need
 
 - a fresh Ubuntu install
-  - we recommend a Ubuntu 22.04 LTS install (e.g. [Pop!_OS](https://system76.com/pop/download/))
+  - we recommend an Ubuntu 22.04 LTS install (e.g. [Pop!_OS](https://system76.com/pop/download/))
   - you can check your Ubuntu version with `lsb_release -a`
 - an internet connection
 
