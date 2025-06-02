@@ -1,146 +1,53 @@
-# Altadim is an AI dev setup for your Linux laptop
+# Concept for Altadim - a Linux setup for AI technologists
 
 Altadim is a developer setup for AI technologists that you set up with one command.
 If you need customisations, we provide a simple way to expand your setup.
 
-## What you need
+[Omakub](https://omakub.org/) is the original inspiration for Altadim.
 
-- a fresh 24.04.2 Ubuntu LTS install
+## For Altadim users
+
+### What you need
+
+- a fresh Ubuntu install
+  - we recommend an Ubuntu 22.04 LTS install (e.g. [Pop!_OS](https://system76.com/pop/download/))
+  - you can check your Ubuntu version with `lsb_release -a`
 - an internet connection
 
-## What you always get
+### What you get
 
 - a basic lazyvim setup with some customisation for AI development in Python
 - a basic vscode setup with some customisation for AI development in Python
-- tools: Alacritty, Zellij, Docker, Tmux, Sqlite, psql, Flameshot
-- code assistants: Aider
+- tools: Alacritty, Zellij, Docker, Tmux, Sqlite, psql
 
-## What you can optionally install
+## For Altadim maintainers
 
-- Khaldoun's open-source projects to work on
+This section explains how to set up a virtual machine to test Altadim
+using VirtualBox and Vagrant.
 
-## Set up a virtual machine to test Altadim
-This guide explains how to set up a testing environment using VirtualBox and Vagrant to efficiently create and manage virtual machines.
+- Vagrant lets you specify & manage virtual Linux distributions.
+- VirtualBox runs your virtual machines.
 
-### Required Tools
+### Prepare your setup
 
-1. **VirtualBox** - A virtualization platform
-   - Installation: [https://www.virtualbox.org/](https://www.virtualbox.org/)
+- First, update your system packages: `sudo apt update && sudo apt upgrade`
+- Install Virtualbox: `sudo apt install virtualbox`
+- Install Vagrant: `sudo apt install vagrant`
 
-2. **Vagrant** - A tool for building and managing virtual machine environments
-   - wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt update && sudo apt install vagrant
+### Set up your Virtual Machine (VM)
 
-### Pre-Installation Steps
+- Create a directory for your VM & initialise git:
+  `mkdir ~/vm-altadim && cd ~/vm-altadim && git init`
+- Create a `Vagrantfile` with Ubuntu 22.04: `vagrant init ubuntu/jammy64`
+- Start your VM with `vagrant up`
+- Enter your VM with `vagrant ssh` and leave it with `exit` (or `ctrl + d`)
 
-Before installing the required tools, update your system packages:
+### Copy Altadim's install file to your VM
 
-```bash
-sudo apt update && sudo apt upgrade
-```
-
-### Why Use Vagrant with VirtualBox
-
-Vagrant with VirtualBox allows you to:
-- Create local virtual machines using simple commands
-- Set up environments without needing ISO files
-- Test setups across different operating system versions
-- Define machine configurations in code (Infrastructure as Code)
-
-### Setting Up Your Testing Environment
-
-#### 1. Create a Directory for Your Virtual Machine
-
-Create a dedicated folder for each VM environment:
-
-```bash
-mkdir vm-altadim
-cd vm-altadim
-```
-
-#### 2. Initialize Git (Optional)
-
-If you want to track changes to your setup:
-
-```bash
-git init
-```
-
-#### 3. Set Up Vagrant Environment
-
-You have multiple options to set up your Vagrant environment, we've chosen this approach:
-
-##### Automatic Initialization with Vagrant
-
-Initialize a Vagrant environment with a specific box (OS image):
-
-```bash
-# For Ubuntu 14.04
-vagrant init ubuntu/trusty64
-
-# For Mac users (if facing trouble)
-vagrant init  perk/ubuntu-2204-arm64
-
-# OR for Ubuntu 22.04
-vagrant init ubuntu/jammy64
-```
-
-
-This creates a basic Vagrantfile that you can modify by uncommenting the needed sections or adding to the file.
-
-
-
-#### 4. Starting Your Virtual Machine
-
-Once your Vagrantfile is configured:
-
-```bash
-vagrant up
-```
-
-```Ruby
-# For Mac users (if error: No image virtual size specified for box)
-Vagrant.configure("2") do |config|
-  config.vm.box = "perk/ubuntu-2204-arm64"
-
-  config.vm.provider "virtualbox" do |vb|
-    # You can add VirtualBox specific configurations here if needed
-  end
-end
-# Make sure to precise VirtualBox as a provider
-```
-
-#### 5. Accessing Your Virtual Machine
-
-Connect to your running VM:
-
-```bash
-vagrant ssh
-```
-
-#### 6. Moving Files to Your VM and running the setup
-
-Transfer files between host and VM:
-- Files placed in the project directory are automatically accessible in the VM at `/vagrant` ==>
-      Place Altadim setup file in the vm-alatdim directory and run it once in your Vm
-- For other directories, configure synced folders in your Vagrantfile
-
-
-```bash
-# Place the file Khaldoun-setup.sh inside vm-altadim directory 
-cp khaldoun_setup.sh vm-altadim/
-```
-
-Inside the Virtual Machine run:
-
-
-```bash
-# Place the file Khaldoun-setup.sh inside vm-altadim directory 
-bash khaldoun_setup.sh
-```
-
-## Further info
-
-- We will document how to use your new setup at <https://books.khaldoun.xyz/2/altadim>.
-- [Omakub](https://omakub.org/) is the original inspiration for Altadim.
+- Files in the project directory (the same directory where the `Vagrantfile` sits)
+  are automatically accessible in the VM at `/vagrant`.
+  - Copy Altadim's install script to the project directory:
+    `wget https://raw.githubusercontent.com/khaldoun-xyz/core_skills/main/setup/khaldoun-setup.sh`
+- Connect to your VM: `vagrant ssh`
+- Navigate to the `/vagrant` directory: `cd /vagrant`
+- Run the install script: `bash khaldoun-setup.sh`
