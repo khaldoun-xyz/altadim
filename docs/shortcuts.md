@@ -7,8 +7,8 @@ These shortcuts draw inspiration from Omakub's
 
 - open file explorer: `super f`
 - open terminal: `super t`
-- move to next workstation: `ctrl super arrow down`
-- move app to next workstation: `shift super arrow down`
+- move to next workspace: `ctrl super arrow down`
+- move app to next workspace: `shift super arrow down`
 - activate full-screen mode in app: `f11`
 
 ## Navigating Zellij
@@ -29,5 +29,6 @@ These shortcuts draw inspiration from Omakub's
 - close all files but the current one: `space + b + o`
 - move to the next file on the left/right: `shift h/l`
 - open the file finder: `space + space`
+- search current file: `/`
 - search all files: `space + s + g`
 - open lazy git: `space + g + g`
