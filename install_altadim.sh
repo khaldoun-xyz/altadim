@@ -231,32 +231,44 @@ return {
 }
 EOF
   log "LazyExtras plugin imports written to $EXTRAS_FILE"
+
+  # Set LSP option EARLY in config
+  CONFIG_DIR="/home/$ORIGINAL_USER/.config/nvim/lua/config"
+  sudo -u "$ORIGINAL_USER" mkdir -p "$CONFIG_DIR"
+  sudo -u "$ORIGINAL_USER" tee "$CONFIG_DIR/init.lua" >/dev/null <<EOF
+vim.g.lazyvim_python_lsp = "basedpyright"
+EOF
+  log "Set lazyvim_python_lsp = 'basedpyright' in lua/config/init.lua"
   OPTIONS_FILE="/home/$ORIGINAL_USER/.config/nvim/lua/config/options.lua"
   sudo -u "$ORIGINAL_USER" tee -a "$OPTIONS_FILE" >/dev/null <<EOF
 
--- Set Python LSP to basedpyright
-vim.g.lazyvim_python_lsp = "basedpyright"
+-- Add any custom options here if needed
 EOF
-  log "Configured LazyVim to use basedpyright for Python."
+  log "Verified options.lua exists"
   INIT_FILE="/home/$ORIGINAL_USER/.config/nvim/init.lua"
   sudo -u "$ORIGINAL_USER" mkdir -p "$(dirname "$INIT_FILE")"
   # Create init.lua if it doesn't exist
   if ! sudo -u "$ORIGINAL_USER" test -f "$INIT_FILE"; then
     sudo -u "$ORIGINAL_USER" tee "$INIT_FILE" >/dev/null <<EOF
--- Load custom options first
+-- Load custom config/init.lua (LSP and other early globals)
+pcall(require, "config")
+
+-- Load custom options
 require("config.options")
 
 -- Then bootstrap LazyVim
 require("config.lazy")
 EOF
-    log "Created new init.lua with config.options"
+    log "Created new init.lua with config.init and config.options"
   else
-    # Insert require("config.options") only if not present
+    # Make sure it sources config and options
     if ! sudo -u "$ORIGINAL_USER" grep -q 'require("config.options")' "$INIT_FILE"; then
       sudo -u "$ORIGINAL_USER" sed -i '/require("config.lazy")/i require("config.options")' "$INIT_FILE"
       log "Inserted require(\"config.options\") before require(\"config.lazy\") in $INIT_FILE"
-    else
-      log "config.options already required in $INIT_FILE"
+    fi
+    if ! sudo -u "$ORIGINAL_USER" grep -q 'require("config")' "$INIT_FILE"; then
+      sudo -u "$ORIGINAL_USER" sed -i '1irequire("config")' "$INIT_FILE"
+      log "Inserted require(\"config\") at top of $INIT_FILE"
     fi
   fi
   log "Neovim and LazyVim setup complete."
