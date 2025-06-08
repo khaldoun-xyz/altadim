@@ -6,5 +6,5 @@ The list will be updated on an ongoing basis.
 - Alacritty as the default terminal
 - Zellij as a terminal multiplexer
 - a customised Lazyvim setup (includes Lazygit & Lazydocker)
-- database support (Sqlite, psql)
+- database support (SQLite, psql)
 - ...
