@@ -366,21 +366,21 @@ EOF"
   # Check if the block already exists
   if ! sudo -u "$ORIGINAL_USER" grep -q "$BASHRC_MARKER" "$BASHRC_PATH"; then
     sudo -u "$ORIGINAL_USER" bash -c "cat <<'EOF' >> \"$BASHRC_PATH\"
-  $BASHRC_MARKER
-  # show git branch in Terminal
-  function parse_git_branch() {
-    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-  }
-  RED=\"\\[\033[01;31m\\]\"
-  YELLOW=\"\\[\033[01;33m\\]\"
-  GREEN=\"\\[\033[01;32m\\]\"
-  BLUE=\"\\[\033[01;34m\\]\"
-  NO_COLOR=\"\\[\033[00m\\]\"
-  PS1=\"\$GREEN\\u\$NO_COLOR:\$BLUE\\w\$YELLOW\\\$(parse_git_branch)\$NO_COLOR\$ \"
+$BASHRC_MARKER
+# show git branch in Terminal
+function parse_git_branch() {
+  git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+RED=\"\\[\033[01;31m\\]\"
+YELLOW=\"\\[\033[01;33m\\]\"
+GREEN=\"\\[\033[01;32m\\]\"
+BLUE=\"\\[\033[01;34m\\]\"
+NO_COLOR=\"\\[\033[00m\\]\"
+PS1=\"\$GREEN\\u\$NO_COLOR:\$BLUE\\w\$YELLOW\\\$(parse_git_branch)\$NO_COLOR\$ \"
 
-  # add neovim alias
-  alias n='~/nvim-linux-x86_64.appimage'
-  EOF"
+# add neovim alias
+alias n='~/nvim-linux-x86_64.appimage'
+"
     log ".bashrc updated with ALTADIM customization for user $ORIGINAL_USER."
   else
     log ".bashrc already contains ALTADIM customization. Skipping append."
