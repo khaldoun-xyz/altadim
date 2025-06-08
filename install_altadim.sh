@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # --- Error Handling ---
 
@@ -24,7 +24,7 @@ error_exit() {
 
 # Check if the script is run with root privileges
 if [[ $EUID -ne 0 ]]; then
-  error_exit "This script must be run with sudo or as root. Please run 'sudo ./khaldoun-setup.sh'"
+  error_exit "This script must be run with sudo or as root. Please run 'sudo bash ./install_altadim.sh'"
 fi
 
 # Store the original user who invoked sudo
