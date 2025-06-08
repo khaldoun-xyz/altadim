@@ -219,26 +219,25 @@ main() {
   log "Add LazyExtras plugin and update options.lua."
   EXTRAS_FILE="/home/$ORIGINAL_USER/.config/nvim/lua/plugins/extras.lua"
   sudo -u "$ORIGINAL_USER" mkdir -p "$(dirname "$EXTRAS_FILE")"
-  sudo -u "$ORIGINAL_USER" tee "$EXTRAS_FILE" > /dev/null <<EOF
-  return {
-    { import = "lazyvim.plugins.extras.lang.python" },
-    { import = "lazyvim.plugins.extras.lang.markdown" },
-    { import = "lazyvim.plugins.extras.lang.docker" },
-    { import = "lazyvim.plugins.extras.lang.sql" },
-    { import = "lazyvim.plugins.extras.lang.yaml" },
-    { import = "lazyvim.plugins.extras.lang.json" },
-    { import = "lazyvim.plugins.extras.lang.terraform" },
-  }
-  EOF
+  sudo -u "$ORIGINAL_USER" tee "$EXTRAS_FILE" >/dev/null <<EOF
+return {
+  { import = "lazyvim.plugins.extras.lang.python" },
+  { import = "lazyvim.plugins.extras.lang.markdown" },
+  { import = "lazyvim.plugins.extras.lang.docker" },
+  { import = "lazyvim.plugins.extras.lang.sql" },
+  { import = "lazyvim.plugins.extras.lang.yaml" },
+  { import = "lazyvim.plugins.extras.lang.json" },
+  { import = "lazyvim.plugins.extras.lang.terraform" },
+}
+EOF
   log "LazyExtras plugin imports written to $EXTRAS_FILE"
   OPTIONS_FILE="/home/$ORIGINAL_USER/.config/nvim/lua/config/options.lua"
-  sudo -u "$ORIGINAL_USER" tee -a "$OPTIONS_FILE" > /dev/null <<EOF
+  sudo -u "$ORIGINAL_USER" tee -a "$OPTIONS_FILE" >/dev/null <<EOF
 
-  -- Set Python LSP to basedpyright
-  vim.g.lazyvim_python_lsp = "basedpyright"
-  EOF
+-- Set Python LSP to basedpyright
+vim.g.lazyvim_python_lsp = "basedpyright"
+EOF
   log "Configured LazyVim to use basedpyright for Python."
-
 
   log "Neovim and LazyVim setup complete."
 
