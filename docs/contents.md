@@ -5,4 +5,3 @@
 - a customised Lazyvim setup (includes Lazygit & Lazydocker)
 - database support (Sqlite, psql)
 - ...
-
