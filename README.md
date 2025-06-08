@@ -1,22 +1,25 @@
-# Altadim: Get a full Linux setup ready in one command 
+# Altadim: Install a Linux setup for AI developers with one command
 
-Starting from a fresh Ubuntu installation, you can get a fully-configured, beautiful setup with one command.
+Get a fully-configured AI developer experience with one command.
+[Omakub](https://omakub.org/) is the original inspiration for Altadim.
 
- Altadim is designed for maximum efficiency and seamless integration, fostering a zero-friction workflow. This means all development tools, libraries, and dependencies are consistently synchronized and pre-configured, eliminating version conflicts and setup overhead.
+Altadim is designed for integrated simplicity.
+This means all dependencies
+are consistently synchronized and pre-configured,
+eliminating version conflicts and setup overhead.
 
+Please let us know if you see ways how we could improve Altadim.
 
-The concept for Altadim is [here](/docs/concept.md). Feel free to contribute.
+## How to install it
 
-## How to run it
+Start with a fresh Ubuntu install
+(we recommend any Ubuntu 24.04 LTS,
+[Pop!_OS' 22.04](https://system76.com/pop/download/) also works).
 
 ```bash
-a wget command will be placed here
+wget https://raw.githubusercontent.com/khaldoun-xyz/altadim/main/install_altadim.sh && sudo bash install_altadim.sh
 ```
 
-Not ready to commit yet, please follow the instructions in our "Setting Up Your Testing Environment" concept page
+## What's in it?
 
-## Suggest changes
-
-- Either open a ticket or a pull request
-- Before opening a PR, make sure your suggestions pass our pre-commit hooks
-  - to install the pre-commit hooks, run `pre-commit install` in root
+[Here](./docs/contents.md) is a full list of what you'll get with Altadim.

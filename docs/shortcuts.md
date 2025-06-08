@@ -10,6 +10,7 @@ These shortcuts draw inspiration from Omakub's
 - move to next workspace: `ctrl super arrow down`
 - move app to next workspace: `shift super arrow down`
 - activate full-screen mode in app: `f11`
+- in terminal, start Neovim with current directory: `n .`
 
 ## Navigating Zellij
 
