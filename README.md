@@ -20,6 +20,9 @@ Start with a fresh Ubuntu install
 wget https://raw.githubusercontent.com/khaldoun-xyz/altadim/main/install_altadim.sh && sudo bash install_altadim.sh
 ```
 
+Note: When you encounter input boxes and don't know what to select,
+just stick with the already selected option.
+
 ## What's in it?
 
 [Here](./docs/contents.md) is a full list of what you'll get with Altadim.

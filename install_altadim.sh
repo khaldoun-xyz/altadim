@@ -66,43 +66,6 @@ configure_git() {
   sudo -u "$ORIGINAL_USER" git config --global credential.helper store || error_exit "Failed to configure Git credential helper for user $ORIGINAL_USER."
 }
 
-# Function to set up a Python project using SSH for Git cloning
-setup_python_project_ssh() {
-  local repo_ssh_url="$1"
-  local project_name="$2"
-  local venv_dir="/home/$ORIGINAL_USER/virtualenvs/$project_name"
-  local project_dir="/home/$ORIGINAL_USER/programming/$project_name" # Corrected typo here
-
-  log "Setting up Python project (SSH) for user $ORIGINAL_USER: $project_name from $repo_ssh_url"
-
-  # Clone the repository if it doesn't already exist, as ORIGINAL_USER
-  if [ ! -d "$project_dir" ]; then
-    sudo -u "$ORIGINAL_USER" git clone "$repo_ssh_url" "$project_dir" || error_exit "Failed to clone $repo_ssh_url via SSH for user $ORIGINAL_USER. Ensure their SSH key is set up with the Git provider (e.g., GitHub)."
-  else
-    log "Repository $project_name already exists. Skipping clone."
-    # Optional: Uncomment the line below if you want to pull latest changes
-    # sudo -u "$ORIGINAL_USER" (cd "$project_dir" && git pull) || log "Could not pull latest for $project_name."
-  fi
-
-  # Create the virtual environment if it doesn't already exist, as ORIGINAL_USER
-  if [ ! -d "$venv_dir" ]; then
-    sudo -u "$ORIGINAL_USER" python3 -m venv "$venv_dir" || error_exit "Failed to create virtual environment for $project_name for user $ORIGINAL_USER."
-  else
-    log "Virtual environment for $project_name already exists. Skipping creation."
-  fi
-
-  # Install Python requirements within the virtual environment, as ORIGINAL_USER
-  log "Installing Python requirements for $project_name for user $ORIGINAL_USER."
-  # Ensure pip, setuptools, and wheel are up-to-date in the venv
-  sudo -u "$ORIGINAL_USER" "$venv_dir/bin/pip" install --upgrade pip setuptools wheel || log "Failed to upgrade pip/setuptools/wheel in $project_name venv for user $ORIGINAL_USER."
-  # Install requirements from requirements.txt if the file exists
-  if [ -f "$project_dir/requirements.txt" ]; then
-    sudo -u "$ORIGINAL_USER" "$venv_dir/bin/pip" install -r "$project_dir/requirements.txt" || error_exit "Failed to install requirements for $project_name for user $ORIGINAL_USER."
-  else
-    log "No requirements.txt found for $project_name. Skipping pip install -r."
-  fi
-}
-
 # Function to install the latest release of a GitHub binary (e.g., lazygit, lazydocker)
 install_latest_github_release() {
   local repo="$1"                     # e.g., "jesseduffield/lazygit"
@@ -150,15 +113,14 @@ main() {
   log "This script will install various development tools and configure your system."
   log "Please ensure you have an active internet connection."
 
-  # 1. System Update and Upgrade
   log "--- Section 1: System Update and Upgrade ---"
   log "Updating and upgrading system packages. This may take some time."
+  echo 'grub-pc grub-pc/install_devices_empty boolean true' | sudo debconf-set-selections
   sudo apt update -y || error_exit "APT update failed."
   sudo apt upgrade -y || error_exit "APT upgrade failed."
   sudo apt dist-upgrade || error_exit "APT dist-upgrade failed."
   log "System packages updated and upgraded."
 
-  # 2. Install Core Applications via APT
   log "--- Section 2: Installing Core APT Packages ---"
   CORE_APT_PACKAGES=(
     "snapd"
@@ -199,7 +161,6 @@ main() {
   install_apt_packages "${CORE_APT_PACKAGES[@]}"
   log "Core APT packages installed."
 
-  # 3. Install Snap Packages
   log "--- Section 3: Installing Snap Packages ---"
   install_snap_package "zellij" "--classic"
   log "Snap packages installed."
@@ -211,7 +172,6 @@ main() {
   sudo usermod -aG docker "$ORIGINAL_USER" || log "WARNING: Failed to add user $ORIGINAL_USER to docker group. You might need to do this manually or check permissions."
   log "Docker group configuration complete."
 
-  # 5. Python Global Tools (using pipx for applications)
   log "--- Section 5: Global Python Applications (via pipx) ---"
   # PEP 668: Avoids direct pip install into system Python.
   # pipx is installed via apt in CORE_APT_PACKAGES.
@@ -222,13 +182,11 @@ main() {
 
   log "Global Python applications installed."
 
-  # 6. Bluetooth Fix (preemptive)
   log "--- Section 6: Bluetooth Configuration ---"
   log "Reinstalling Bluetooth packages to preempt common headphone issues."
   sudo apt reinstall --purge bluez gnome-bluetooth -y || log "WARNING: Bluetooth package reinstallation failed. Check apt logs for details."
   log "Bluetooth packages reinstalled (if needed)."
 
-  # 7. Setup Development Directories
   log "--- Section 7: Setting up Development Directories ---"
   log "Creating '/home/$ORIGINAL_USER/virtualenvs' and '/home/$ORIGINAL_USER/programming' directories for user $ORIGINAL_USER."
   sudo -u "$ORIGINAL_USER" mkdir -p "/home/$ORIGINAL_USER/virtualenvs" || log "WARNING: Directory /home/$ORIGINAL_USER/virtualenvs already exists or could not be created."
@@ -238,8 +196,7 @@ main() {
   log "Attempting to change current directory to /home/$ORIGINAL_USER/programming/ (for informational purposes)."
   # The actual cloning commands use absolute paths, so the current directory of the root user is less important.
 
-  # 8. Neovim Installation
-  log "--- Section 10: Neovim Installation and Configuration ---"
+  log "--- Section 8: Neovim Installation and Configuration ---"
   log "Installing Neovim AppImage for user $ORIGINAL_USER."
   local nvim_appimage="/home/$ORIGINAL_USER/nvim-linux-x86_64.appimage"
   if [ ! -f "$nvim_appimage" ]; then
@@ -258,18 +215,41 @@ main() {
   else
     log "LazyVim configuration already exists for user $ORIGINAL_USER. Skipping clone."
   fi
+
+  log "Add LazyExtras plugin and update options.lua."
+  EXTRAS_FILE="/home/$ORIGINAL_USER/.config/nvim/lua/plugins/extras.lua"
+  sudo -u "$ORIGINAL_USER" mkdir -p "$(dirname "$EXTRAS_FILE")"
+  sudo -u "$ORIGINAL_USER" tee "$EXTRAS_FILE" > /dev/null <<EOF
+  return {
+    { import = "lazyvim.plugins.extras.lang.python" },
+    { import = "lazyvim.plugins.extras.lang.markdown" },
+    { import = "lazyvim.plugins.extras.lang.docker" },
+    { import = "lazyvim.plugins.extras.lang.sql" },
+    { import = "lazyvim.plugins.extras.lang.yaml" },
+    { import = "lazyvim.plugins.extras.lang.json" },
+    { import = "lazyvim.plugins.extras.lang.terraform" },
+  }
+  EOF
+  log "LazyExtras plugin imports written to $EXTRAS_FILE"
+  OPTIONS_FILE="/home/$ORIGINAL_USER/.config/nvim/lua/config/options.lua"
+  sudo -u "$ORIGINAL_USER" tee -a "$OPTIONS_FILE" > /dev/null <<EOF
+
+  -- Set Python LSP to basedpyright
+  vim.g.lazyvim_python_lsp = "basedpyright"
+  EOF
+  log "Configured LazyVim to use basedpyright for Python."
+
+
   log "Neovim and LazyVim setup complete."
 
-  # 9. Install Lazygit and Lazydocker
-  log "--- Section 11: Installing Lazygit and Lazydocker ---"
+  log "--- Section 9: Installing Lazygit and Lazydocker ---"
   # These are installed to /usr/local/bin, which is system-wide, but the download process
   # needs to be done as the original user to access their home directory for temp files.
   install_latest_github_release "jesseduffield/lazygit" "lazygit"
   install_latest_github_release "jesseduffield/lazydocker" "lazydocker"
   log "Lazygit and Lazydocker installed."
 
-  # 10. Install Nerd Fonts for Alacritty
-  log "--- Section 12: Installing FiraCode Nerd Font ---"
+  log "--- Section 10: Installing FiraCode Nerd Font ---"
   local font_zip="FiraCode.zip"
   local font_dir="/home/$ORIGINAL_USER/.local/share/fonts"
   # Ensure font directory exists and is owned by the original user
@@ -288,8 +268,7 @@ main() {
   fi
   log "Nerd Fonts setup complete."
 
-  # 11. Configure Alacritty
-  log "--- Section 13: Configuring Alacritty Terminal ---"
+  log "--- Section 11: Configuring Alacritty Terminal ---"
   local alacritty_config_dir="/home/$ORIGINAL_USER/.config/alacritty/"
   # Ensure config directory exists and is owned by the original user
   sudo -u "$ORIGINAL_USER" mkdir -p "$alacritty_config_dir" || log "WARNING: Alacritty config directory already exists or could not be created for user $ORIGINAL_USER."
@@ -308,8 +287,7 @@ env:
 EOF"
   log "Alacritty configuration updated with FiraCode Nerd Font for user $ORIGINAL_USER."
 
-  # 12. Node.js and npm tools for LazyVim
-  log "--- Section 14: Node.js and npm Tools ---"
+  log "--- Section 12: Node.js and npm Tools ---"
   log "Installing global npm packages for LazyVim plugins."
 
   sudo npm install -g markdownlint-cli2 || log "WARNING: Failed to install markdownlint-cli2 globally. LazyVim linting might be affected."
@@ -334,14 +312,12 @@ EOF"
   fi
   log "Node.js and npm tools setup complete."
 
-  # 13. Python Linting Tool (using pipx)
-  log "--- Section 15: Python Linting Tools (via pipx) ---"
+  log "--- Section 13: Python Linting Tools (via pipx) ---"
   log "Installing mypy-django for Python linting using pipx for user $ORIGINAL_USER."
   sudo -u "$ORIGINAL_USER" pipx install mypy-django || log "WARNING: Failed to install mypy-django with pipx for user $ORIGINAL_USER. Python linting might be affected."
   log "Python linting tools installed."
 
-  # 14. Install Brave Browser
-  log "--- Section 16: Installing Brave Browser ---"
+  log "--- Section 14: Installing Brave Browser ---"
   log "Adding Brave Browser repository and installing Brave."
   # Ensure keyring directory exists
   sudo mkdir -p /usr/share/keyrings/ || log "WARNING: Failed to create /usr/share/keyrings/ directory."
@@ -351,12 +327,37 @@ EOF"
   sudo apt install -y brave-browser || error_exit "Failed to install Brave Browser."
   log "Brave Browser installed."
 
+  log "--- Section 15: Updating .bashrc with Aliases and Git Prompt ---"
+
+  BASHRC_PATH="/home/$ORIGINAL_USER/.bashrc"
+  BASHRC_MARKER="# --------------------------- ADDED BY ALTADIM --------------------------------"
+
+  # Check if the block already exists
+  if ! sudo -u "$ORIGINAL_USER" grep -q "$BASHRC_MARKER" "$BASHRC_PATH"; then
+    sudo -u "$ORIGINAL_USER" bash -c "cat <<'EOF' >> \"$BASHRC_PATH\"
+  $BASHRC_MARKER
+  # show git branch in Terminal
+  function parse_git_branch() {
+    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+  }
+  RED=\"\\[\033[01;31m\\]\"
+  YELLOW=\"\\[\033[01;33m\\]\"
+  GREEN=\"\\[\033[01;32m\\]\"
+  BLUE=\"\\[\033[01;34m\\]\"
+  NO_COLOR=\"\\[\033[00m\\]\"
+  PS1=\"\$GREEN\\u\$NO_COLOR:\$BLUE\\w\$YELLOW\\\$(parse_git_branch)\$NO_COLOR\$ \"
+
+  # add neovim alias
+  alias n='~/nvim-linux-x86_64.appimage'
+  EOF"
+    log ".bashrc updated with ALTADIM customization for user $ORIGINAL_USER."
+  else
+    log ".bashrc already contains ALTADIM customization. Skipping append."
+  fi
+
   log "--- Setup Complete! ---"
   log "Ubuntu Development Environment Setup Script finished successfully (with warnings if any)."
-  log "IMPORTANT NEXT STEPS:"
-  log "1. Please log out and log back in for Docker group changes to take full effect."
-  log "2. Open a new terminal session for NVM (Node Version Manager) changes to be fully active."
-  log "3. Verify your SSH key setup for GitHub if you encountered any cloning issues."
+  log "IMPORTANT NEXT STEPS: Reboot for Docker group & NVM (Node Version Manager) changes to take full effect."
   log "Review the log file at $LOG_FILE for any warnings or errors that occurred during execution."
 }
 
