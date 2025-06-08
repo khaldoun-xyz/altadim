@@ -216,7 +216,7 @@ main() {
     log "LazyVim configuration already exists for user $ORIGINAL_USER. Skipping clone."
   fi
 
-  log "Add LazyExtras plugin and update options.lua."
+  log "Add LazyExtras plugin, update options.lua and update init.lua."
   EXTRAS_FILE="/home/$ORIGINAL_USER/.config/nvim/lua/plugins/extras.lua"
   sudo -u "$ORIGINAL_USER" mkdir -p "$(dirname "$EXTRAS_FILE")"
   sudo -u "$ORIGINAL_USER" tee "$EXTRAS_FILE" >/dev/null <<EOF
@@ -238,7 +238,27 @@ EOF
 vim.g.lazyvim_python_lsp = "basedpyright"
 EOF
   log "Configured LazyVim to use basedpyright for Python."
+  INIT_FILE="/home/$ORIGINAL_USER/.config/nvim/init.lua"
+  sudo -u "$ORIGINAL_USER" mkdir -p "$(dirname "$INIT_FILE")"
+  # Create init.lua if it doesn't exist
+  if ! sudo -u "$ORIGINAL_USER" test -f "$INIT_FILE"; then
+    sudo -u "$ORIGINAL_USER" tee "$INIT_FILE" >/dev/null <<EOF
+-- Load custom options first
+require("config.options")
 
+-- Then bootstrap LazyVim
+require("config.lazy")
+EOF
+    log "Created new init.lua with config.options"
+  else
+    # Insert require("config.options") only if not present
+    if ! sudo -u "$ORIGINAL_USER" grep -q 'require("config.options")' "$INIT_FILE"; then
+      sudo -u "$ORIGINAL_USER" sed -i '/require("config.lazy")/i require("config.options")' "$INIT_FILE"
+      log "Inserted require(\"config.options\") before require(\"config.lazy\") in $INIT_FILE"
+    else
+      log "config.options already required in $INIT_FILE"
+    fi
+  fi
   log "Neovim and LazyVim setup complete."
 
   log "--- Section 9: Installing Lazygit and Lazydocker ---"
