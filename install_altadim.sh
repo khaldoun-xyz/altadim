@@ -163,6 +163,11 @@ main() {
 
   log "--- Section 3: Installing Snap Packages ---"
   install_snap_package "zellij" "--classic"
+  install_snap_package "code" "--classic"
+  
+  # Install recommended VS Code extensions   sudo -u "$ORIGINAL_USER" code --install-extension eamodio.gitlens
+  sudo -u "$ORIGINAL_USER" code --install-extension ms-python.python
+  sudo -u "$ORIGINAL_USER" code --install-extension charliermarsh.ruff
   log "Snap packages installed."
 
   # 4. Docker Post-installation Steps
