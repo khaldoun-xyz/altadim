@@ -5,8 +5,9 @@ These shortcuts draw inspiration from Omakub's
 
 ## Navigating Linux
 
-- open file explorer: `super f`
-- open terminal: `super t`
+- open search bar: `super`
+- maximise current window: `super m`
+- move current window to left/right screen section: `ctrl super arrow left/right` Does it work now?
 - move to next workspace: `ctrl super arrow down`
 - move app to next workspace: `shift super arrow down`
 - activate full-screen mode in app: `f11`
