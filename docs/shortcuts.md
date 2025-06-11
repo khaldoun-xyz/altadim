@@ -7,7 +7,7 @@ These shortcuts draw inspiration from Omakub's
 
 - open search bar: `super`
 - maximise current window: `super m`
-- move current window to left/right screen section: `ctrl super arrow left/right` Does it work now?
+- move current window to left/right screen section: `ctrl super arrow left/right`
 - move to next workspace: `ctrl super arrow down`
 - move app to next workspace: `shift super arrow down`
 - activate full-screen mode in app: `f11`
