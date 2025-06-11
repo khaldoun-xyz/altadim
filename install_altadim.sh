@@ -305,6 +305,10 @@ EOF
   install_latest_github_release "jesseduffield/lazygit" "lazygit"
   install_latest_github_release "jesseduffield/lazydocker" "lazydocker"
   log "Lazygit and Lazydocker installed."
+  log "Creating empty config.yml for Lazygit under /home/$ORIGINAL_USER/.config/lazygit"
+  sudo -u "$ORIGINAL_USER" mkdir -p "/home/$ORIGINAL_USER/.config/lazygit" || log "WARNING: Failed to create .config/lazygit directory."
+  sudo -u "$ORIGINAL_USER" touch "/home/$ORIGINAL_USER/.config/lazygit/config.yml" || log "WARNING: Failed to create empty config.yml for Lazygit."
+  log "Empty Lazygit config.yml created."
 
   log "--- Section 10: Installing FiraCode Nerd Font ---"
   local font_zip="FiraCode.zip"
