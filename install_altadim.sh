@@ -345,29 +345,26 @@ EOF"
   log "Alacritty configuration updated with FiraCode Nerd Font for user $ORIGINAL_USER."
 
   log "--- Section 12: Node.js and npm Tools ---"
-  log "Installing global npm packages for LazyVim plugins."
-
-  sudo npm install -g markdownlint-cli2 || log "WARNING: Failed to install markdownlint-cli2 globally. LazyVim linting might be affected."
-
-  log "Installing NVM (Node Version Manager) for user $ORIGINAL_USER."
-  local nvm_install_script="https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh"
+  log "Installing NVM (Node Version Manager) and Node.js for user $ORIGINAL_USER."
   local nvm_dir="/home/$ORIGINAL_USER/.nvm"
+  local nvm_install_script="https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh"
+  # Install NVM if it doesn't exist
   if [ ! -d "$nvm_dir" ]; then
-    # Run NVM install script as ORIGINAL_USER
-    sudo -u "$ORIGINAL_USER" curl -o- "$nvm_install_script" | bash || log "WARNING: Failed to install NVM for user $ORIGINAL_USER. Node.js setup might be incomplete."
-    # Source NVM for the current script session for the ORIGINAL_USER's environment
-    # This is tricky as the script runs as root, but nvm commands need user context.
-    # We will attempt to run nvm commands as ORIGINAL_USER.
-    log "NVM installed for user $ORIGINAL_USER. Installing LTS Node.js."
-    sudo -u "$ORIGINAL_USER" bash -c "export NVM_DIR=\"$nvm_dir\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; nvm install --lts" || log "WARNING: Failed to install LTS Node.js via NVM for user $ORIGINAL_USER. Node.js might not be available."
-    sudo -u "$ORIGINAL_USER" bash -c "export NVM_DIR=\"$nvm_dir\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; nvm use --lts" || log "WARNING: Failed to set LTS Node.js as default via NVM for user $ORIGINAL_USER."
+    log "NVM not found. Installing..."
+    sudo -u "$ORIGINAL_USER" bash -c "curl -o- \"$nvm_install_script\" | bash" || log "WARNING: Failed to install NVM."
   else
-    log "NVM already installed for user $ORIGINAL_USER. Skipping NVM installation."
-    log "Ensuring LTS Node.js is installed for user $ORIGINAL_USER."
-    sudo -u "$ORIGINAL_USER" bash -c "export NVM_DIR=\"$nvm_dir\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; nvm install --lts" || log "WARNING: Failed to install LTS Node.js via NVM for user $ORIGINAL_USER. Node.js might not be available."
-    sudo -u "$ORIGINAL_USER" bash -c "export NVM_DIR=\"$nvm_dir\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; nvm use --lts" || log "WARNING: Failed to set LTS Node.js as default via NVM for user $ORIGINAL_USER."
+    log "NVM already installed for $ORIGINAL_USER. Skipping installation."
   fi
-  log "Node.js and npm tools setup complete."
+  log "Installing LTS version of Node.js and markdownlint-cli2..."
+  sudo -u "$ORIGINAL_USER" bash -c "
+    export NVM_DIR=\"$nvm_dir\"
+    [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"
+    nvm install --lts
+    nvm use --lts
+    nvm alias default 'lts/*'
+    npm install -g markdownlint-cli2
+  " || log "WARNING: Failed to install Node.js or markdownlint-cli2 for user $ORIGINAL_USER."
+  log "Node.js and markdownlint-cli2 installed successfully for user $ORIGINAL_USER."
 
   log "--- Section 13: Python Linting Tools (via pipx) ---"
   log "Installing mypy-django for Python linting using pipx for user $ORIGINAL_USER."
