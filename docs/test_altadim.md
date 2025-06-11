@@ -18,16 +18,11 @@ using VirtualBox and Vagrant.
   `mkdir ~/vm-altadim && cd ~/vm-altadim && git init`
 - Create a `Vagrantfile` with Ubuntu 24.04:
   `vagrant init bento/ubuntu-24.04 --box-version 202502.21.0`
-- Start your VM with `vagrant up`
 - Files in the project directory (the same directory where the `Vagrantfile` sits)
   are automatically accessible in the VM at `/vagrant`.
   - Copy Altadim's install script to the project directory:
     `wget https://raw.githubusercontent.com/khaldoun-xyz/altadim/main/install_altadim.sh`
-- Enter your VM with `vagrant ssh` and leave it with `exit` (or `ctrl + d`)
-- Files in the project directory (the same directory where the `Vagrantfile` sits)
-  are automatically accessible in the VM at `/vagrant`.
-  - Copy Altadim's install script to the project directory:
-    `wget https://raw.githubusercontent.com/khaldoun-xyz/altadim/main/install_altadim.sh`
-- Connect to your VM: `vagrant ssh`
+- Start your VM with `vagrant up` (you may need to run this as `sudo`)
+- Connect to your VM: `vagrant ssh` (you may need to run this as `sudo`)
 - Navigate to the `/vagrant` directory: `cd /vagrant`
 - Run the install script: `sudo bash install_altadim.sh`
