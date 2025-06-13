@@ -66,6 +66,32 @@ configure_git() {
   sudo -u "$ORIGINAL_USER" git config --global credential.helper store || error_exit "Failed to configure Git credential helper for user $ORIGINAL_USER."
 }
 
+setup_git_ssh() {
+  local ssh_dir="/home/$ORIGINAL_USER/.ssh"
+  local ssh_key="$ssh_dir/id_ed25519"
+  log "Setting up Git SSH for user $ORIGINAL_USER."
+  if [ -f "$ssh_key" ]; then
+    log "SSH key already exists for $ORIGINAL_USER at $ssh_key. Skipping key generation."
+  else
+    log "Generating a new SSH key for $ORIGINAL_USER."
+    sudo -u "$ORIGINAL_USER" mkdir -p "$ssh_dir"
+    sudo -u "$ORIGINAL_USER" ssh-keygen -t ed25519 -C "$ORIGINAL_USER@$(hostname)" -f "$ssh_key" -N "" || error_exit "Failed to generate SSH key for $ORIGINAL_USER."
+    log "SSH key generated successfully for $ORIGINAL_USER."
+  fi
+  # Ensure proper permissions
+  sudo chown -R "$ORIGINAL_USER":"$ORIGINAL_USER" "$ssh_dir"
+  sudo chmod 700 "$ssh_dir"
+  sudo chmod 600 "$ssh_key"
+  sudo chmod 644 "$ssh_key.pub"
+  log "Here is the public SSH key for $ORIGINAL_USER:"
+  sudo -u "$ORIGINAL_USER" cat "$ssh_key.pub"
+  log "You should now add this key to your Git hosting service (e.g., GitHub/GitLab)."
+  log "Opening GitHub SSH key settings page in Brave Browser..."
+  sudo -u "$ORIGINAL_USER" brave-browser "https://github.com/settings/ssh/new" || log "WARNING: Could not open GitHub SSH key page. Please open it manually."
+  log "Testing SSH connection to GitHub (you may see a one-time prompt to confirm the host fingerprint)..."
+  sudo -u "$ORIGINAL_USER" ssh -T git@github.com || log "SSH test to GitHub failed. This may be expected if the key hasn’t been added yet."
+}
+
 # Function to install the latest release of a GitHub binary (e.g., lazygit, lazydocker)
 install_latest_github_release() {
   local repo="$1"                     # e.g., "jesseduffield/lazygit"
@@ -279,6 +305,10 @@ EOF
   install_latest_github_release "jesseduffield/lazygit" "lazygit"
   install_latest_github_release "jesseduffield/lazydocker" "lazydocker"
   log "Lazygit and Lazydocker installed."
+  log "Creating empty config.yml for Lazygit under /home/$ORIGINAL_USER/.config/lazygit"
+  sudo -u "$ORIGINAL_USER" mkdir -p "/home/$ORIGINAL_USER/.config/lazygit" || log "WARNING: Failed to create .config/lazygit directory."
+  sudo -u "$ORIGINAL_USER" touch "/home/$ORIGINAL_USER/.config/lazygit/config.yml" || log "WARNING: Failed to create empty config.yml for Lazygit."
+  log "Empty Lazygit config.yml created."
 
   log "--- Section 10: Installing FiraCode Nerd Font ---"
   local font_zip="FiraCode.zip"
@@ -319,29 +349,26 @@ EOF"
   log "Alacritty configuration updated with FiraCode Nerd Font for user $ORIGINAL_USER."
 
   log "--- Section 12: Node.js and npm Tools ---"
-  log "Installing global npm packages for LazyVim plugins."
-
-  sudo npm install -g markdownlint-cli2 || log "WARNING: Failed to install markdownlint-cli2 globally. LazyVim linting might be affected."
-
-  log "Installing NVM (Node Version Manager) for user $ORIGINAL_USER."
-  local nvm_install_script="https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh"
+  log "Installing NVM (Node Version Manager) and Node.js for user $ORIGINAL_USER."
   local nvm_dir="/home/$ORIGINAL_USER/.nvm"
+  local nvm_install_script="https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh"
+  # Install NVM if it doesn't exist
   if [ ! -d "$nvm_dir" ]; then
-    # Run NVM install script as ORIGINAL_USER
-    sudo -u "$ORIGINAL_USER" curl -o- "$nvm_install_script" | bash || log "WARNING: Failed to install NVM for user $ORIGINAL_USER. Node.js setup might be incomplete."
-    # Source NVM for the current script session for the ORIGINAL_USER's environment
-    # This is tricky as the script runs as root, but nvm commands need user context.
-    # We will attempt to run nvm commands as ORIGINAL_USER.
-    log "NVM installed for user $ORIGINAL_USER. Installing LTS Node.js."
-    sudo -u "$ORIGINAL_USER" bash -c "export NVM_DIR=\"$nvm_dir\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; nvm install --lts" || log "WARNING: Failed to install LTS Node.js via NVM for user $ORIGINAL_USER. Node.js might not be available."
-    sudo -u "$ORIGINAL_USER" bash -c "export NVM_DIR=\"$nvm_dir\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; nvm use --lts" || log "WARNING: Failed to set LTS Node.js as default via NVM for user $ORIGINAL_USER."
+    log "NVM not found. Installing..."
+    sudo -u "$ORIGINAL_USER" bash -c "curl -o- \"$nvm_install_script\" | bash" || log "WARNING: Failed to install NVM."
   else
-    log "NVM already installed for user $ORIGINAL_USER. Skipping NVM installation."
-    log "Ensuring LTS Node.js is installed for user $ORIGINAL_USER."
-    sudo -u "$ORIGINAL_USER" bash -c "export NVM_DIR=\"$nvm_dir\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; nvm install --lts" || log "WARNING: Failed to install LTS Node.js via NVM for user $ORIGINAL_USER. Node.js might not be available."
-    sudo -u "$ORIGINAL_USER" bash -c "export NVM_DIR=\"$nvm_dir\"; [ -s \"\$NVM_DIR/nvm.sh\" ] && \\. \"\$NVM_DIR/nvm.sh\"; nvm use --lts" || log "WARNING: Failed to set LTS Node.js as default via NVM for user $ORIGINAL_USER."
+    log "NVM already installed for $ORIGINAL_USER. Skipping installation."
   fi
-  log "Node.js and npm tools setup complete."
+  log "Installing LTS version of Node.js and markdownlint-cli2..."
+  sudo -u "$ORIGINAL_USER" bash -c "
+    export NVM_DIR=\"$nvm_dir\"
+    [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\"
+    nvm install --lts
+    nvm use --lts
+    nvm alias default 'lts/*'
+    npm install -g markdownlint-cli2
+  " || log "WARNING: Failed to install Node.js or markdownlint-cli2 for user $ORIGINAL_USER."
+  log "Node.js and markdownlint-cli2 installed successfully for user $ORIGINAL_USER."
 
   log "--- Section 13: Python Linting Tools (via pipx) ---"
   log "Installing mypy-django for Python linting using pipx for user $ORIGINAL_USER."
@@ -385,6 +412,9 @@ alias n='~/nvim-linux-x86_64.appimage'
   else
     log ".bashrc already contains ALTADIM customization. Skipping append."
   fi
+
+  log "--- Section 16: Setting Up Git via SSH ---"
+  setup_git_ssh
 
   log "--- Setup Complete! ---"
   log "Ubuntu Development Environment Setup Script finished successfully (with warnings if any)."
