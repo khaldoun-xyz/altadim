@@ -26,3 +26,7 @@ using VirtualBox and Vagrant.
 - Connect to your VM: `vagrant ssh` (you may need to run this as `sudo`)
 - Navigate to the `/vagrant` directory: `cd /vagrant`
 - Run the install script: `sudo bash install_altadim.sh`
+
+## Error log
+
+- If you encounter errors, you might find help here: [potential errors](/docs/potential_errors.md)
