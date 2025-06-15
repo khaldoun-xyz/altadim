@@ -25,4 +25,8 @@ just stick with the already selected option.
 
 ## What's in it?
 
-[Here](./docs/contents.md) is a full list of what you'll get with Altadim.
+The [Contents file](./docs/contents.md) lists what you'll get with Altadim.
+
+## Error log
+
+- If you encounter errors, you might find help here: [potential errors](/docs/potential_errors.md)
