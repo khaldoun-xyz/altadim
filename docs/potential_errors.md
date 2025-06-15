@@ -9,5 +9,5 @@
   - `sudo apt install libvirt-daemon-system libvirt-clients qemu-kvm`
 - "Name `vm-altadim_default` of domain about to create is already taken.
   Please try to run `vagrant up` command again."
-  - `sudo virsh destroy vm-altadim_default`
-  - `sudo virsh undefine vm-altadim_default`
+  - `sudo virsh destroy vm-altadaim_default`
+  - `sudo virsh undefine vm-altadaim_default`
