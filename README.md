@@ -16,7 +16,7 @@ Start with a fresh Ubuntu install
 [Pop!_OS' 22.04](https://system76.com/pop/download/) also works).
 
 ```bash
-wget https://raw.githubusercontent.com/khaldoun-xyz/altadaim/main/install_altadim.sh && sudo bash install_altadaim.sh
+wget https://raw.githubusercontent.com/khaldoun-xyz/altadaim/main/install_altadaim.sh && sudo bash install_altadaim.sh
 ```
 
 Note: When you encounter input boxes and don't know what to select,
