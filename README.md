@@ -1,7 +1,7 @@
 # Altadaim: Install a Linux developer setup for data scientists
 
 Get a fully-configured developer experience with one command.
-[Omakub](https://omakub.org/) is the original inspiration for Altadim.
+[Omakub](https://omakub.org/) is the original inspiration for Altadaim.
 
 Altadaim is designed for simplicity.
 All dependencies are consistently synchronized and pre-configured,
